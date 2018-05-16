@@ -11,10 +11,9 @@ const instructions = Platform.select({
 });
 
 class BeaconsList extends Component {
-
   state = {
     beacons: []
-  }
+  };
 
   async componentDidMount() {
     // Tells the library to detect iBeacons
@@ -28,18 +27,64 @@ class BeaconsList extends Component {
       console.log(`Beacons ranging not started, error: ${error}`);
     }
 
-    // Print a log of the detected iBeacons (1 per second)
     DeviceEventEmitter.addListener("beaconsDidRange", data => {
-      console.log("Found beacons!", data.beacons);
+      this.setState(prevState => {
+        const newArray = [...prevState.beacons];
+        for (var beacon in data.beacons) {
+          if (!newArray.find(bc => bc.uuid === data.beacons[beacon].uuid)) {
+            newArray.push(data.beacons[beacon]);
+            this.setState({ beacons: newArray });
+          }
+        }
+      });
+      console.log("Found beacons!", this.state.beacons);
     });
   }
 
+  findColor = uuid => {
+    switch (uuid) {
+      case "bbbe":
+        return "pink";
+      case "adef":
+        return "white";
+      case "cbf5":
+        return "#C70039";
+      case "98d1":
+        return "yellow";
+      default:
+        return "#DAF7A6";
+    }
+    return "red";
+  };
+
   render() {
+    const instructions = Platform.select({
+      ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
+      android:
+        "Double tap R on your keyboard to reload,\n" +
+        "Shake or press menu button for dev menu"
+    });
+
+    const beacons = this.state.beacons.map(beacon => (
+      <Text
+        key={beacon.uuid}
+        style={{
+          backgroundColor: this.findColor(beacon.uuid.substring(0, 4)),
+          fontSize: 20,
+          margin: 10
+        }}
+      >
+        Beacon {beacon.uuid.substring(0, 4)} is {beacon.distance}
+      </Text>
+    ));
+
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome Pedro</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        {this.state.beacons.length ? (
+          beacons
+        ) : (
+          <Text style={styles.empty}>No se ha encontrado ningún beacon</Text>
+        )}
       </View>
     );
   }
@@ -48,19 +93,13 @@ class BeaconsList extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#F5FCFF"
   },
-  welcome: {
+  empty: {
     fontSize: 20,
+    marginTop: 200,
     textAlign: "center",
     margin: 10
-  },
-  instructions: {
-    textAlign: "center",
-    color: "#333333",
-    marginBottom: 5
   }
 });
 
