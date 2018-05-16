@@ -3,13 +3,6 @@ import { Platform, StyleSheet, Text, View } from "react-native";
 import { DeviceEventEmitter } from "react-native";
 import Beacons from "react-native-beacons-manager";
 
-const instructions = Platform.select({
-  ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
-  android:
-    "Double tap R on your keyboard to reload,\n" +
-    "Shake or press menu button for dev menu"
-});
-
 class BeaconsList extends Component {
   state = {
     beacons: []
@@ -33,7 +26,7 @@ class BeaconsList extends Component {
         for (var beacon in data.beacons) {
           if (!newArray.find(bc => bc.uuid === data.beacons[beacon].uuid)) {
             newArray.push(data.beacons[beacon]);
-            this.setState({ beacons: newArray });
+            return { beacons: newArray };
           }
         }
       });
@@ -58,13 +51,6 @@ class BeaconsList extends Component {
   };
 
   render() {
-    const instructions = Platform.select({
-      ios: "Press Cmd+R to reload,\n" + "Cmd+D or shake for dev menu",
-      android:
-        "Double tap R on your keyboard to reload,\n" +
-        "Shake or press menu button for dev menu"
-    });
-
     const beacons = this.state.beacons.map(beacon => (
       <Text
         key={beacon.uuid}
