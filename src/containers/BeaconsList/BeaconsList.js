@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
-import { DeviceEventEmitter } from "react-native";
-import Beacons from "react-native-beacons-manager";
+import React, { Component } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
+import Beacons from 'react-native-beacons-manager';
 
 class BeaconsList extends Component {
   state = {
@@ -14,13 +14,13 @@ class BeaconsList extends Component {
 
     // Start detecting all iBeacons in the nearby
     try {
-      await Beacons.startRangingBeaconsInRegion("REGION1");
+      await Beacons.startRangingBeaconsInRegion('REGION1');
       console.log(`Beacons ranging started succesfully!`);
     } catch (err) {
       console.log(`Beacons ranging not started, error: ${error}`);
     }
 
-    DeviceEventEmitter.addListener("beaconsDidRange", data => {
+    DeviceEventEmitter.addListener('beaconsDidRange', data => {
       this.setState(prevState => {
         const newArray = [...prevState.beacons];
         for (var beacon in data.beacons) {
@@ -30,24 +30,24 @@ class BeaconsList extends Component {
           }
         }
       });
-      console.log("Found beacons!", this.state.beacons);
+      console.log('Found beacons!', this.state.beacons);
     });
   }
 
   findColor = uuid => {
     switch (uuid) {
-      case "bbbe":
-        return "pink";
-      case "adef":
-        return "white";
-      case "cbf5":
-        return "#C70039";
-      case "98d1":
-        return "yellow";
+      case 'bbbe':
+        return 'pink';
+      case 'adef':
+        return 'white';
+      case 'cbf5':
+        return '#C70039';
+      case '98d1':
+        return 'yellow';
       default:
-        return "#DAF7A6";
+        return '#DAF7A6';
     }
-    return "red";
+    return 'red';
   };
 
   render() {
@@ -79,12 +79,12 @@ class BeaconsList extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5FCFF"
+    backgroundColor: '#F5FCFF'
   },
   empty: {
     fontSize: 20,
     marginTop: 200,
-    textAlign: "center",
+    textAlign: 'center',
     margin: 10
   }
 });
