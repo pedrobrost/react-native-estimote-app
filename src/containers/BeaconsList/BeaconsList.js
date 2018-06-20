@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import { DeviceEventEmitter } from 'react-native';
 import Beacons from 'react-native-beacons-manager';
+
+import Beacon from '../../components/Beacon/Beacon';
 
 class BeaconsList extends Component {
   state = {
@@ -14,6 +16,7 @@ class BeaconsList extends Component {
 
     // Start detecting all iBeacons in the nearby
     try {
+      Beacons.setForegroundScanPeriod(1500);
       await Beacons.startRangingBeaconsInRegion('REGION1');
       console.log(`Beacons ranging started succesfully!`);
     } catch (err) {
@@ -21,51 +24,28 @@ class BeaconsList extends Component {
     }
 
     DeviceEventEmitter.addListener('beaconsDidRange', data => {
-      this.setState(prevState => {
-        const newArray = [...prevState.beacons];
-        for (var beacon in data.beacons) {
-          if (!newArray.find(bc => bc.uuid === data.beacons[beacon].uuid)) {
-            newArray.push(data.beacons[beacon]);
-            return { beacons: newArray };
-          }
-        }
+      this.setState({
+        beacons: data.beacons.sort((a, b) => a.uuid.localeCompare(b.uuid))
       });
       console.log('Found beacons!', this.state.beacons);
     });
   }
 
-  findColor = uuid => {
-    switch (uuid) {
-      case 'bbbe':
-        return 'pink';
-      case 'adef':
-        return 'white';
-      case 'cbf5':
-        return '#C70039';
-      case '98d1':
-        return 'yellow';
-      default:
-        return '#DAF7A6';
-    }
-    return 'red';
-  };
-
   render() {
     const beacons = this.state.beacons.map(beacon => (
-      <Text
-        key={beacon.uuid}
-        style={{
-          backgroundColor: this.findColor(beacon.uuid.substring(0, 4)),
-          fontSize: 20,
-          margin: 10
-        }}
-      >
-        Beacon {beacon.uuid.substring(0, 4)} is {beacon.distance}
-      </Text>
+      <Beacon key={beacon.uuid} data={beacon} />
     ));
 
     return (
       <View style={styles.container}>
+        <Button
+          onPress={async () =>
+            await Beacons.stopRangingBeaconsInRegion('REGION1')
+          }
+          title="Stop Ranging"
+          color="#841584"
+          accessibilityLabel="Learn more about this purple button"
+        />
         {this.state.beacons.length ? (
           beacons
         ) : (
