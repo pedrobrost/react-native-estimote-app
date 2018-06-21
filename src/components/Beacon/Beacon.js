@@ -13,7 +13,7 @@ const beacon = ({ data }) => {
       case '98d1':
         return 'yellow';
       default:
-        return '#DAF7A6';
+        return 'limegreen';
     }
   };
 
@@ -21,13 +21,23 @@ const beacon = ({ data }) => {
   return (
     <Text
       style={{
-        fontSize: 18,
-        paddingTop: 20,
+        fontSize: 17,
+        paddingTop: 5,
         paddingLeft: 20,
-        paddingRight: 20
+        paddingRight: 20,
       }}
     >
-      Color: <Text style={{ color }}>{color}</Text>
+      Color:{' '}
+      <Text
+        style={{
+          color,
+          textShadowColor: 'black',
+          textShadowOffset: { width: 0.1, height: 0.1 },
+          textShadowRadius: 8,
+        }}
+      >
+        ●
+      </Text>
       {'\n'}
       UUID: {data.uuid}
       {'\n'}
